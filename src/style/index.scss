@@ -1,0 +1,50 @@
+@import 'normalize.css';
+@import '_vars.scss';
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  font-family: 'Montserrat-Regular', sans-serif;
+}
+
+.container {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+h1 {
+  font: {
+    family: $heading-font-family;
+    size: $h1-font-size;
+    weight: $font-black-weight;
+  }
+}
+
+h2 {
+  font: {
+    family: $heading-font-family;
+    size: $h2-font-size;
+    weight: $font-semi-bold-weight;
+  }
+}
+
+h3 {
+  font: {
+    family: $heading-font-family;
+    size: $h3-font-size;
+    weight: $font-regular-weight;
+  }
+}
+
+h4 {
+  font: {
+    family: $heading-font-family;
+    size: $h4-font-size;
+    weight: $font-semi-bold-weight;
+  }
+}
