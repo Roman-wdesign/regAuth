@@ -1,7 +1,24 @@
+<script setup lang="ts">
+const props = defineProps({
+  width: {
+    type: [String, Number],
+    default: 32,
+  },
+  height: {
+    type: [String, Number],
+    default: 32,
+  },
+  color: {
+    type: String,
+    default: 'white',
+  },
+})
+</script>
+
 <template>
   <svg
-    width="34"
-    height="34"
+    :width="props.width"
+    :height="props.height"
     viewBox="0 0 34 34"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

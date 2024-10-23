@@ -1,5 +1,4 @@
-@import 'normalize.css';
-@import '_vars.scss';
+@use './vars' as *;
 
 *,
 *:before,
@@ -10,6 +9,11 @@
 html {
   font-size: 62.5%;
   font-family: 'Montserrat-Regular', sans-serif;
+  color: $white;
+}
+
+body {
+  background-color: #0a1f38;
 }
 
 .container {
