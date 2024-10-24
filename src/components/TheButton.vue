@@ -24,7 +24,6 @@ const props = defineProps({
 
 let IconComponent = null
 
-// Если передана иконка, загружаем компонент
 if (props.icon) {
   IconComponent = defineAsyncComponent(
     () => import(`@/components/icons/${props.icon}.vue`),
@@ -45,6 +44,6 @@ if (props.icon) {
 .icon {
   display: flex;
   align-items: center;
-  margin-right: 12px;
+  padding-right: 12px;
 }
 </style>
