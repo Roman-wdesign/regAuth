@@ -1,5 +1,5 @@
-@use "normalize.css" as *;
-@use "vars" as *;
+@use 'normalize.css' as *;
+@use 'vars' as *;
 
 *,
 *:before,
@@ -9,35 +9,26 @@
 
 html {
   font-size: 62.5%;
-  font-family: "Montserrat-Regular", sans-serif;
+  font-family: 'Montserrat-Regular', sans-serif;
   color: $white;
-
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
 }
 
 body {
   background-color: $dark;
-  min-height: 100vh;
-
-  margin: 0;
-  padding: 0;
-  height: 100%;
 }
 
 .container {
   width: 100%;
   margin: 0 auto;
-  padding: 0 1rem;
-  overflow: hidden;
 
   @media (min-width: $breakpoint-small) {
-    max-width: 768px;
+    max-width: $breakpoint-medium;
   }
   @media (min-width: $breakpoint-medium) {
+    max-width: $breakpoint-large;
   }
   @media (min-width: $breakpoint-large) {
+    max-width: $breakpoint-xlarge;
   }
   @media (min-width: $breakpoint-xlarge) {
   }
