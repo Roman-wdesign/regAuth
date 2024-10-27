@@ -1,21 +1,42 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import TheButton from '@/components/TheButton.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const goToLogin = () => {
-  router.push('/login')
+  router.push('/register')
 }
+
+const isAuthenticated = ref(false) // Флаг авторизации
+const userEmail = ref<string | null>(null) // Почта пользователя
+
+// Проверка авторизации пользователя при монтировании
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    // Если токен существует, считаем пользователя авторизованным
+    isAuthenticated.value = true
+    // Получаем почту пользователя из локального хранилища
+    userEmail.value = localStorage.getItem('userEmail')
+  }
+})
 </script>
 
 <template>
   <div class="header">
-    <div class="svg-container">
-      <img src="@/components/icons/logo.svg" alt="Large SVG" />
-    </div>
+    <RouterLink to="/">
+      <div class="svg-container">
+        <img src="@/components/icons/logo.svg" alt="Large SVG" />
+      </div>
+    </RouterLink>
     <div>
+      <span v-if="isAuthenticated">Вы авторизованы</span>
+      <span v-if="isAuthenticated">{{ userEmail }}</span>
       <TheButton
+        v-if="!isAuthenticated"
         @loginClick="goToLogin"
+        :hasPadding="true"
         label="Вход"
         icon="IconLogIn"
         buttonClass="login-button"

@@ -1,8 +1,35 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { isAuthenticated } from '@/api/auth'
+import AuthPopup from './AuthPopup.vue'
+
+const router = useRouter()
+const showRegisterModal = ref(false) // Флаг для отображения модального окна регистрации
+
+onMounted(async () => {
+  // Проверка авторизации при монтировании
+  const token = localStorage.getItem('token')
+  const authStatus = token ? await isAuthenticated() : false
+
+  if (!authStatus) {
+    // Если пользователь не авторизован
+    const isRegistered = localStorage.getItem('isRegistered') // Проверка регистрации
+    if (isRegistered) {
+      // Если зарегистрирован, но не авторизован, перенаправляем на страницу авторизации
+      router.push({ name: 'login' })
+    } else {
+      // Если не зарегистрирован, показываем модальное окно регистрации
+      showRegisterModal.value = true
+    }
+  }
+})
+</script>
 
 <template>
   <div class="welcome">
     <div class="welcome_text-block">
+      <AuthPopup></AuthPopup>
       <h1>
         Мои <br />
         заметки

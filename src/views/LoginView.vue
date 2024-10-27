@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { login } from '@/api/auth'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/store'
+import { useUserStore } from '@/stores/useUserStore'
 
 const email = ref('')
 const password = ref('')

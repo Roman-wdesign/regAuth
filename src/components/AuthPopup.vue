@@ -1,0 +1,218 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useUserStore } from '@/stores/useUserStore'
+import TheButton from '@/components/TheButton.vue'
+
+const authStore = useUserStore()
+const isPopupVisible = ref(true) // Управляет отображением попапа
+const username = ref('')
+const password = ref('')
+
+const login = () => {
+  if (username.value && password.value) {
+    authStore.login() // Логика авторизации (предполагается, что она есть в authStore)
+    closePopup()
+  }
+}
+
+const closePopup = () => {
+  isPopupVisible.value = false
+}
+</script>
+
+<template>
+  <div v-if="isPopupVisible" class="popup-overlay">
+    <div class="popup-content">
+      <div class="header">
+        <div class="btn-pos">
+          <TheButton
+            :hasPadding="false"
+            @click="closePopup"
+            label=""
+            icon="IconClose"
+            class="close-btn"
+          >
+            Закрыть
+          </TheButton>
+        </div>
+
+        <h2 class="popup_login-header">Вход в ваш аккаунт</h2>
+      </div>
+
+      <form class="form-login" @submit.prevent="login">
+        <div class="box">
+          <label class="label">Пароль</label>
+          <input
+            class="input-username"
+            v-model="username"
+            placeholder="Введите email"
+            required
+          />
+        </div>
+
+        <div class="box">
+          <label class="label">Email</label>
+          <input
+            class="input-password"
+            v-model="password"
+            type="password"
+            placeholder="Введите пароль"
+            required
+          />
+        </div>
+      </form>
+      <div class="links">
+        <div class="reg-info">
+          <p class="no-account">У вас нет аккаунта?</p>
+          <p class="go-reg" href="/register">Зарегистрируйтесь</p>
+        </div>
+        <div>
+          <TheButton
+            type="submit"
+            :hasPadding="false"
+            @click="closePopup"
+            label="Войти"
+            icon=""
+            class="submit-btn"
+          >
+            Войти
+          </TheButton>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+@use '@/style/vars.scss' as *;
+
+.box {
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  padding: 0 10px 24px 0;
+}
+
+.label {
+  color: $grey;
+  padding-left: 20px;
+  font-size: $text-font-size-small;
+}
+
+.input-username {
+  font-size: $text-font-size-small;
+  padding: 23px 10px 23px 20px;
+  min-width: 620px;
+  width: 100%;
+  border-radius: 36px;
+}
+
+.input-password {
+  font-size: $text-font-size-small;
+  padding: 23px 10px 23px 20px;
+  min-width: 620px;
+  width: 100%;
+  border-radius: 36px;
+}
+
+.popup-content {
+  background: $dark-middle;
+  padding: 80px;
+  border-radius: 40px;
+  max-width: 780px;
+  max-height: 672px;
+  width: 100%;
+  height: 100%;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup_login-header {
+  color: $green-middle;
+}
+
+.form-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.close-btn {
+  background: $green-middle;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 30px;
+
+  padding: 20px 20px;
+}
+
+.submit-btn {
+  background: $green-middle;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 30px;
+  font-size: $text-font-size-normal;
+  padding: 12px 24px;
+}
+
+.btn-pos {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding-right: 20px;
+  padding-top: 20px;
+}
+
+.reg-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.go-reg {
+  color: $green-light;
+  font-size: $text-font-size-small-bold;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.no-account {
+  color: $grey;
+  font-size: $text-font-size-small;
+}
+
+@media (min-width: $breakpoint-small) and (max-width: $breakpoint-medium) {
+}
+
+@media (min-width: $breakpoint-medium) and (max-width: $breakpoint-large) {
+}
+
+@media (min-width: $breakpoint-large) and (max-width: $breakpoint-xlarge) {
+}
+
+@media (min-width: $breakpoint-xlarge) {
+}
+</style>

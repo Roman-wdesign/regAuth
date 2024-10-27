@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from 'vue'
-import { defineEmits } from 'vue'
 const emit = defineEmits(['loginClick'])
 
 const props = defineProps({
@@ -23,6 +22,11 @@ const props = defineProps({
     required: false,
     default: '',
   },
+  hasPadding: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 })
 
 let IconComponent = null
@@ -40,7 +44,11 @@ const goToLogin = () => {
 
 <template>
   <button :class="buttonClass" @click="goToLogin">
-    <span v-if="IconComponent" class="icon">
+    <span
+      v-if="IconComponent"
+      class="icon"
+      :class="{ 'padded-icon': hasPadding }"
+    >
       <component :is="IconComponent" :color="props.iconColor" />
     </span>
     <span if="label">{{ label }}</span>
@@ -51,6 +59,9 @@ const goToLogin = () => {
 .icon {
   display: flex;
   align-items: center;
+}
+
+.padded-icon {
   padding-right: 12px;
 }
 </style>
