@@ -1,26 +1,48 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useUserStore } from '@/stores/useUserStore'
 import TheButton from '@/components/TheButton.vue'
 import { useRouter } from 'vue-router'
+
+const userStore = useUserStore()
 const router = useRouter()
 
-const goToLogin = () => {
-  router.push('/register')
-}
+const isAuthenticated = ref(false)
+const userEmail = ref<string | null>(null)
 
-const isAuthenticated = ref(false) // Флаг авторизации
-const userEmail = ref<string | null>(null) // Почта пользователя
-
-// Проверка авторизации пользователя при монтировании
+// Проверяем наличие токена и email при монтировании
 onMounted(() => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    // Если токен существует, считаем пользователя авторизованным
+  if (userStore.token) {
     isAuthenticated.value = true
-    // Получаем почту пользователя из локального хранилища
-    userEmail.value = localStorage.getItem('userEmail')
+    userEmail.value = userStore.email || localStorage.getItem('userEmail')
   }
 })
+
+// Отслеживаем изменения email в userStore
+watch(
+  () => userStore.email,
+  newEmail => {
+    if (newEmail) {
+      isAuthenticated.value = true
+      userEmail.value = newEmail
+    } else {
+      isAuthenticated.value = false
+      userEmail.value = null
+    }
+  },
+)
+
+function reloadPage() {
+  location.reload()
+}
+
+// Функция выхода
+const logout = () => {
+  userStore.logout()
+  isAuthenticated.value = false
+  userEmail.value = null
+  router.push('/')
+}
 </script>
 
 <template>
@@ -31,15 +53,25 @@ onMounted(() => {
       </div>
     </RouterLink>
     <div>
-      <span v-if="isAuthenticated">Вы авторизованы</span>
-      <span v-if="isAuthenticated">{{ userEmail }}</span>
+      <!-- <span v-if="isAuthenticated">Вы авторизованы</span> -->
+      <span class="user-email" v-if="isAuthenticated && userEmail">{{
+        userEmail
+      }}</span>
       <TheButton
-        v-if="!isAuthenticated"
-        @loginClick="goToLogin"
+        buttonClass="login-button"
+        v-if="isAuthenticated"
+        @click="logout"
+        :hasPadding="true"
+        label="Выход"
+        icon="IconUser"
+      />
+      <TheButton
+        buttonClass="login-button"
+        v-else
+        @click="reloadPage"
         :hasPadding="true"
         label="Вход"
         icon="IconLogIn"
-        buttonClass="login-button"
       />
     </div>
   </div>
@@ -47,6 +79,10 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use '@/style/vars.scss' as *;
+
+.user-email {
+  color: $grey;
+}
 
 img {
   width: 100%;

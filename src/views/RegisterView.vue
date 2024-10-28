@@ -18,7 +18,7 @@ const handleRegister = async () => {
     await login(email.value, password.value)
 
     // Переход на страницу логина
-    router.push('/login')
+    router.push('/')
   } catch (e) {
     // Выводим сообщение об ошибке
     error.value =
@@ -41,5 +41,18 @@ const handleRegister = async () => {
       <button type="submit">Register</button>
     </form>
     <p v-if="error">{{ error }}</p>
+    <p>Уже зарегистрированы?</p>
+    <RouterLink to="/">
+      <p class="go-reg">Перейти на главную и авторизоваться</p>
+    </RouterLink>
   </div>
 </template>
+
+<style lang="scss" scoped>
+@use '@/style/vars.scss' as *;
+
+.go-reg {
+  color: $green-light;
+  font-size: $text-font-size-small-bold;
+}
+</style>

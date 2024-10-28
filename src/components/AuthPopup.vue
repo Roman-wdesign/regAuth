@@ -1,23 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/useUserStore'
 import TheButton from '@/components/TheButton.vue'
 
 const authStore = useUserStore()
-const isPopupVisible = ref(true) // Управляет отображением попапа
+const isPopupVisible = ref(!authStore.isAuthenticated) // Попап не виден, если пользователь авторизован
 const username = ref('')
 const password = ref('')
 
-const login = () => {
+const login = async () => {
   if (username.value && password.value) {
-    authStore.login() // Логика авторизации (предполагается, что она есть в authStore)
-    closePopup()
+    try {
+      await authStore.login(username.value, password.value)
+      closePopup()
+    } catch (error) {
+      console.error('Ошибка входа:', error)
+      // Здесь можно добавить логику обработки ошибки
+    }
   }
 }
 
 const closePopup = () => {
   isPopupVisible.value = false
 }
+
+onMounted(() => {
+  if (authStore.isAuthenticated) {
+    isPopupVisible.value = false
+  }
+})
 </script>
 
 <template>
@@ -35,10 +46,8 @@ const closePopup = () => {
             Закрыть
           </TheButton>
         </div>
-
         <h2 class="popup_login-header">Вход в ваш аккаунт</h2>
       </div>
-
       <form class="form-login" @submit.prevent="login">
         <div class="box">
           <label class="label">Пароль</label>
@@ -49,7 +58,6 @@ const closePopup = () => {
             required
           />
         </div>
-
         <div class="box">
           <label class="label">Email</label>
           <input
@@ -63,14 +71,17 @@ const closePopup = () => {
       </form>
       <div class="links">
         <div class="reg-info">
-          <p class="no-account">У вас нет аккаунта?</p>
-          <p class="go-reg" href="/register">Зарегистрируйтесь</p>
+          <a>У вас нет аккаунта?</a>
+
+          <RouterLink to="/register">
+            <a class="go-reg">Зарегистрируйтесь</a>
+          </RouterLink>
         </div>
         <div>
           <TheButton
             type="submit"
             :hasPadding="false"
-            @click="closePopup"
+            @click="login"
             label="Войти"
             icon=""
             class="submit-btn"
@@ -79,12 +90,31 @@ const closePopup = () => {
           </TheButton>
         </div>
       </div>
+      <div v-if="!authStore.isAuthenticated && username" class="error-nouser">
+        <p class="error-message">Пользователь с таким логином не найден</p>
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 @use '@/style/vars.scss' as *;
+
+a {
+  color: $grey;
+  font-size: $text-font-size-small;
+
+  text-decoration: none;
+}
+
+.error-nouser {
+  background-color: rgba(255, 116, 97, 0.1);
+  color: $warning;
+  font-size: $text-font-size-small;
+  width: 100%;
+  border-radius: 24px;
+  padding-left: 20px;
+}
 
 .box {
   display: flex;
@@ -197,11 +227,6 @@ const closePopup = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.no-account {
-  color: $grey;
-  font-size: $text-font-size-small;
 }
 
 @media (min-width: $breakpoint-small) and (max-width: $breakpoint-medium) {

@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { isAuthenticated } from '@/api/auth'
-import AuthPopup from './AuthPopup.vue'
+import AuthPopup from '@/components/AuthPopup.vue'
 
 const router = useRouter()
 const showRegisterModal = ref(false) // Флаг для отображения модального окна регистрации
