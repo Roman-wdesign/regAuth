@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
 import TheButton from '@/components/TheButton.vue'
 
 const authStore = useUserStore()
-const isPopupVisible = ref(!authStore.isAuthenticated) // Попап не виден, если пользователь авторизован
+const router = useRouter()
+const isPopupVisible = ref(!authStore.isAuthenticated)
 const username = ref('')
 const password = ref('')
 
@@ -13,9 +15,9 @@ const login = async () => {
     try {
       await authStore.login(username.value, password.value)
       closePopup()
+      router.push({ name: 'Notes' }) // Перенаправление на страницу заметок
     } catch (error) {
       console.error('Ошибка входа:', error)
-      // Здесь можно добавить логику обработки ошибки
     }
   }
 }
@@ -23,12 +25,6 @@ const login = async () => {
 const closePopup = () => {
   isPopupVisible.value = false
 }
-
-onMounted(() => {
-  if (authStore.isAuthenticated) {
-    isPopupVisible.value = false
-  }
-})
 </script>
 
 <template>
@@ -50,7 +46,7 @@ onMounted(() => {
       </div>
       <form class="form-login" @submit.prevent="login">
         <div class="box">
-          <label class="label">Пароль</label>
+          <label class="label">Email</label>
           <input
             class="input-username"
             v-model="username"
@@ -59,7 +55,7 @@ onMounted(() => {
           />
         </div>
         <div class="box">
-          <label class="label">Email</label>
+          <label class="label">Пароль</label>
           <input
             class="input-password"
             v-model="password"
@@ -71,10 +67,8 @@ onMounted(() => {
       </form>
       <div class="links">
         <div class="reg-info">
-          <a>У вас нет аккаунта?</a>
-
           <RouterLink to="/register">
-            <a class="go-reg">Зарегистрируйтесь</a>
+            <a>У вас нет аккаунта?</a>
           </RouterLink>
         </div>
         <div>

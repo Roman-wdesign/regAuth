@@ -9,8 +9,8 @@ const router = useRouter()
 
 const isAuthenticated = ref(false)
 const userEmail = ref<string | null>(null)
+const showLogoutText = ref(false) // Добавим переменную для отображения текста
 
-// Проверяем наличие токена и email при монтировании
 onMounted(() => {
   if (userStore.token) {
     isAuthenticated.value = true
@@ -18,7 +18,6 @@ onMounted(() => {
   }
 })
 
-// Отслеживаем изменения email в userStore
 watch(
   () => userStore.email,
   newEmail => {
@@ -36,7 +35,6 @@ function reloadPage() {
   location.reload()
 }
 
-// Функция выхода
 const logout = () => {
   userStore.logout()
   isAuthenticated.value = false
@@ -52,19 +50,27 @@ const logout = () => {
         <img src="@/components/icons/logo.svg" alt="Large SVG" />
       </div>
     </RouterLink>
-    <div>
-      <!-- <span v-if="isAuthenticated">Вы авторизованы</span> -->
+    <div class="info-user">
       <span class="user-email" v-if="isAuthenticated && userEmail">{{
         userEmail
       }}</span>
-      <TheButton
-        buttonClass="login-button"
+
+      <div
+        class="logout-container"
         v-if="isAuthenticated"
-        @click="logout"
-        :hasPadding="true"
-        label="Выход"
-        icon="IconUser"
-      />
+        @mouseover="showLogoutText = true"
+        @mouseleave="showLogoutText = false"
+      >
+        <TheButton
+          @click="logout"
+          label=""
+          :hasPadding="false"
+          class="logout-btn"
+          icon="IconUser"
+        />
+        <span v-if="showLogoutText" class="hover-text">Выйти</span>
+      </div>
+
       <TheButton
         buttonClass="login-button"
         v-else
@@ -80,8 +86,41 @@ const logout = () => {
 <style lang="scss" scoped>
 @use '@/style/vars.scss' as *;
 
+.logout-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  .hover-text {
+    position: absolute;
+    bottom: -10rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: $green-light;
+    font-size: 1.4rem;
+    background-color: $dark-middle;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+  }
+}
+
+.logout-btn {
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+
 .user-email {
+  font-size: $text-font-size-small;
   color: $grey;
+}
+
+.info-user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 img {
