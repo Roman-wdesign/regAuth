@@ -14,8 +14,11 @@ const handleLogin = async () => {
     await userStore.login(email.value, password.value)
     router.push('/')
   } catch (e) {
-    if (e instanceof Error && e.response?.data?.message) {
-      error.value = e.response.data.message
+
+    const err = e as { response?: { data?: { message?: string } } }
+
+    if (err.response?.data?.message) {
+      error.value = err.response.data.message
     } else {
       error.value = 'Произошла ошибка'
     }

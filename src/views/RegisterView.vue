@@ -29,9 +29,11 @@ const handleRegister = async () => {
     // Переход на страницу логина
     router.push('/notes')
   } catch (e) {
+
     // Выводим сообщение об ошибке
-    if (e instanceof Error && e.response?.data?.message) {
-      error.value = e.response.data.message
+    const err = e as { response?: { data?: { message?: string } } }
+    if (err.response?.data?.message) {
+      error.value = err.response.data.message
     } else {
       error.value = 'Произошла ошибка при регистрации'
     }
