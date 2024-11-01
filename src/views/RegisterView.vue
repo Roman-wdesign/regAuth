@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { register, login } from '@/api/auth'
+import { register } from '@/api/auth'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
+
+import TheButton from '@/components/TheButton.vue'
+
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const error = ref('')
 const router = useRouter()
+const authStore = useUserStore()
+const isPopupVisible = ref(!authStore.isAuthenticated)
 
-import TheButton from '@/components/TheButton.vue'
+const closePopup = () => {
+  isPopupVisible.value = false
+}
 
 const handleRegister = async () => {
   try {
@@ -17,22 +24,18 @@ const handleRegister = async () => {
     await register(email.value, password.value, confirmPassword.value)
 
     // Логинимся после регистрации и получаем токен
-    await login(email.value, password.value)
+    await authStore.login(email.value, password.value)
 
     // Переход на страницу логина
-    router.push('/')
+    router.push('/notes')
   } catch (e) {
     // Выводим сообщение об ошибке
-    error.value =
-      e.response?.data?.message || 'Произошла ошибка при регистрации'
+    if (e instanceof Error && e.response?.data?.message) {
+      error.value = e.response.data.message
+    } else {
+      error.value = 'Произошла ошибка при регистрации'
+    }
   }
-}
-
-const authStore = useUserStore()
-
-const isPopupVisible = ref(!authStore.isAuthenticated)
-const closePopup = () => {
-  isPopupVisible.value = false
 }
 </script>
 
@@ -42,13 +45,7 @@ const closePopup = () => {
       <div class="popup-content">
         <div class="header">
           <div class="btn-pos">
-            <TheButton
-              :hasPadding="false"
-              @click="closePopup"
-              label=""
-              icon="IconClose"
-              class="close-btn"
-            >
+            <TheButton :hasPadding="false" @click="closePopup" label="" icon="IconClose" class="close-btn">
             </TheButton>
           </div>
           <h2 class="popup_login-header">Регистрация</h2>
@@ -56,33 +53,16 @@ const closePopup = () => {
         <form class="form-login" @submit.prevent="handleRegister">
           <div class="box">
             <label class="label">Email</label>
-            <input
-              type="email"
-              class="input-username"
-              v-model="email"
-              placeholder="Введите email"
-              required
-            />
+            <input type="email" class="input-username" v-model="email" placeholder="Введите email" required />
           </div>
           <div class="box">
             <label class="label">Пароль</label>
-            <input
-              class="input-password"
-              v-model="password"
-              type="password"
-              placeholder="Введите пароль"
-              required
-            />
+            <input class="input-password" v-model="password" type="password" placeholder="Введите пароль" required />
           </div>
           <div class="box">
             <label class="label">Пароль ещё раз</label>
-            <input
-              class="input-password"
-              v-model="confirmPassword"
-              type="password"
-              placeholder="Введите пароль"
-              required
-            />
+            <input class="input-password" v-model="confirmPassword" type="password" placeholder="Введите пароль"
+              required />
             <div class="links">
               <div class="reg-info">
                 <RouterLink to="/">
@@ -90,13 +70,7 @@ const closePopup = () => {
                 </RouterLink>
               </div>
               <div>
-                <TheButton
-                  type="submit"
-                  :hasPadding="false"
-                  label="Зарегистрироваться"
-                  icon=""
-                  class="submit-btn"
-                >
+                <TheButton type="submit" :hasPadding="false" label="Зарегистрироваться" icon="" class="submit-btn">
                 </TheButton>
               </div>
             </div>

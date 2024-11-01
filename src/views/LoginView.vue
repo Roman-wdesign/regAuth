@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { login } from '@/api/auth'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
 
@@ -12,11 +11,14 @@ const router = useRouter()
 
 const handleLogin = async () => {
   try {
-    const { token } = await login(email.value, password.value)
-    userStore.login(token)
+    await userStore.login(email.value, password.value)
     router.push('/')
   } catch (e) {
-    error.value = e.response.data.message
+    if (e instanceof Error && e.response?.data?.message) {
+      error.value = e.response.data.message
+    } else {
+      error.value = 'Произошла ошибка'
+    }
   }
 }
 </script>
